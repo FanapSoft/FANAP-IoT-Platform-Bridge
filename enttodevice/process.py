@@ -1,0 +1,57 @@
+from enttodevice import app_celery
+import environs
+import paho.mqtt.client
+import json
+
+
+def build_topic(deviceid):
+    return '/{}/p2d'.format(deviceid)
+
+
+env = environs.Env()
+with env.prefixed("OP_MQTT_"):
+    _config = dict(
+        mqtt = env("URL","localhost"),
+        mqtt_usr = env("USR",""),
+        mqtt_pass = env("PASS",""),
+        mqtt_port = int(env("PORT",1883, 'int')),
+    )
+
+
+def conv_msg_ent2dev(msg):
+    l1 = json.loads(msg)
+    l2 = json.loads(l1['content'])
+    l3 = json.loads(l2)
+    timestamp = int(l3['timeStamp'])
+    data = json.loads(l3['data'])
+
+    ret_dict = dict(TimeStamp=timestamp, data=[data])
+    ret = json.dumps(ret_dict)
+    return ret
+
+
+
+def create_mqtt_client():
+    client = paho.mqtt.client.Client()
+
+    if _config['mqtt_usr']:
+        client.username_pw_set(_config['mqtt_usr'], _config['mqtt_pass'])
+
+    client.connect(_config['mqtt'], _config['mqtt_port'], 60)    
+    return client
+
+
+
+def publish_to_mqtt(deviceid, msg):
+    topic = build_topic(deviceid)
+    client = create_mqtt_client()
+    client.publish(topic, msg)
+    client.disconnect()
+
+
+
+@app_celery.task
+def sendtodev(deviceid, msg):
+    m = conv_msg_ent2dev(msg)
+    publish_to_mqtt(deviceid, m)
+    return 0
