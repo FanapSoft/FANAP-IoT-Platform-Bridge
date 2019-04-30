@@ -1,0 +1,16 @@
+version: '3'
+services:   
+  ent-to-device:
+    build: enttodevice
+    container_name: ent-to-device-c
+    env_file: setup.env
+  
+  device-to-ent:
+    build: devicetoent
+    container_name: device-to-ent-c
+    env_file: setup.env
+    
+networks:
+  default:
+    external:
+      name: plt-network

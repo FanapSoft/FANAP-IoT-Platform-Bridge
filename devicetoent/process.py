@@ -4,9 +4,6 @@ import paho.mqtt.client
 import json
 
 
-ENT_TOPIC = 'as/ingate'
-
-
 env = environs.Env()
 with env.prefixed("ENT_MQTT_"):
     _config = dict(
@@ -15,6 +12,7 @@ with env.prefixed("ENT_MQTT_"):
         mqtt_pass = env("PASS",""),
         mqtt_port = int(env("PORT",1883, 'int')),
     )
+    ENT_TOPIC = env("INPUT_TOPIC", 'input/iot')
 
 def conv_msg_dev2open(msg, ent_devid):
     m = json.loads(msg)
