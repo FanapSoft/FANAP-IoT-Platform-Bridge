@@ -28,7 +28,7 @@ def get_brocker_addr():
 app_celery = Celery(
     'devicetoent',
     broker=get_brocker_addr(),
-    include=['process']
+    include=['processdevpkt']
 )
 
 
