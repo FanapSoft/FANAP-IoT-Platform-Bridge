@@ -42,7 +42,7 @@ def conv_msg_ent2dev(msg):
     if _use_num_translate:
         data = translate_to_num(data)
 
-    ret_dict = dict(TimeStamp=timestamp, data=[data])
+    ret_dict = dict(TimeStamp=int(timestamp), data=[data])
     ret = json.dumps(ret_dict)
     return ret
 
