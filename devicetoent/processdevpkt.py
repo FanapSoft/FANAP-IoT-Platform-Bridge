@@ -30,16 +30,19 @@ def conv_msg_dev2open(msg, ent_devid):
 
     m = json.loads(msg)
 
+    data = m['data'][0]
+
     if _use_case_translate:
-        m = translate_to_lower(m)
+        data = translate_to_lower(data)
 
     if _use_num_translate:
-        m = translate_to_str(m)
+        
+        data = translate_to_str(data)
         
 
     ret = dict(
         timeStamp = m['TimeStamp'],
-        data = m['data'],
+        data = [data],
         deviceId = ent_devid
     )
     return json.dumps(ret)
