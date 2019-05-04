@@ -41,7 +41,7 @@ def conv_msg_dev2open(msg, ent_devid):
         
 
     ret = dict(
-        timeStamp = m['TimeStamp'],
+        timeStamp = str(m['TimeStamp']),
         data = [data],
         deviceId = ent_devid
     )
