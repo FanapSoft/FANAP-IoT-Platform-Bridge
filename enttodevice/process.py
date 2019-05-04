@@ -17,6 +17,10 @@ with env.prefixed("OP_MQTT_"):
         mqtt_port = int(env("PORT",1883, 'int')),
     )
 
+_use_id_translate = env("ENABLE_ID_TRANSLATE",False, 'bool')
+
+if _use_id_translate:
+    from idtranslate import translate_to_open_id
 
 def conv_msg_ent2dev(msg):
     l1 = json.loads(msg)
@@ -52,6 +56,9 @@ def publish_to_mqtt(deviceid, msg):
 
 @app_celery.task
 def sendtodev(deviceid, msg):
+    if _use_id_translate:
+        deviceid = translate_to_open_id(deviceid)
+        
     m = conv_msg_ent2dev(msg)
     publish_to_mqtt(deviceid, m)
     return 0

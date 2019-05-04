@@ -3,7 +3,6 @@ import environs
 import paho.mqtt.client
 import json
 
-
 env = environs.Env()
 with env.prefixed("ENT_MQTT_"):
     _config = dict(
@@ -13,6 +12,11 @@ with env.prefixed("ENT_MQTT_"):
         mqtt_port = int(env("PORT",1883, 'int')),
     )
     ENT_TOPIC = env("INPUT_TOPIC", 'input/iot')
+
+_use_id_translate = env("ENABLE_ID_TRANSLATE",False, 'bool')
+
+if _use_id_translate:
+    from idtranslate import translate_to_ent_id
 
 def conv_msg_dev2open(msg, ent_devid):
     m = json.loads(msg)
@@ -47,6 +51,8 @@ def publish_to_mqtt(msg):
 
 @app_celery.task
 def sendtoplat(deviceid, msg):
+    if _use_id_translate:
+        deviceid = translate_to_ent_id(deviceid)
     m = conv_msg_dev2open(msg, deviceid)
     publish_to_mqtt(m)
     return 0
