@@ -8,4 +8,4 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 ENTRYPOINT [ "celery" ] 
-CMD [ "-A", "devicetoent", "worker", "-l", "info"]
+CMD [ "-A", "devicetoent", "worker", "-l", "info", "-Q", "d2p"]

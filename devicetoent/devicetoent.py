@@ -31,6 +31,7 @@ app_celery = Celery(
     include=['processdevpkt']
 )
 
+app_celery.conf.task_default_queue = 'd2p'
 
 import mqttclient
 # Get mqtt-client

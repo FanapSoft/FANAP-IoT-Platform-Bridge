@@ -31,6 +31,7 @@ app_celery = Celery(
     include=['process']
 )
 
+app_celery.conf.task_default_queue = 'p2d'
 
 import mqttclient
 # Get mqtt-client
