@@ -15,6 +15,8 @@ with env.prefixed("ENT_MQTT_"):
 
 _use_id_translate = env("ENABLE_ID_TRANSLATE",False, 'bool')
 
+_mqtt_client_id = ent("ENT_MQTT_CLIENT_ID","")
+
 if _use_id_translate:
     from idtranslate import translate_to_ent_id
 
@@ -30,7 +32,10 @@ def conv_msg_dev2open(msg, ent_devid):
 
 
 def create_mqtt_client():
-    client = paho.mqtt.client.Client()
+    if _mqtt_client_id:
+        client = paho.mqtt.client.Client(client_id=_mqtt_client_id)
+    else:
+        client = paho.mqtt.client.Client()
 
     if _config['mqtt_usr']:
         client.username_pw_set(_config['mqtt_usr'], _config['mqtt_pass'])
@@ -41,6 +46,7 @@ def create_mqtt_client():
 
 
 def publish_to_mqtt(msg):
+    # ToDo: Use publish.single from paho library
     topic = ENT_TOPIC
     client = create_mqtt_client()
     client.publish(topic, msg)
