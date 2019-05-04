@@ -18,7 +18,7 @@ _use_id_translate = env("ENABLE_ID_TRANSLATE",False, 'bool')
 _use_num_translate  = env("ENABLE_NUM_FIELD_TRANSLATE",False, 'bool')
 _use_case_translate  = env("ENABLE_CASE_FIELD_TRANSLATE",False, 'bool')
 
-_mqtt_client_id = ent("ENT_MQTT_CLIENT_ID","")
+_mqtt_client_id = env("ENT_MQTT_CLIENT_ID","")
 
 if _use_id_translate:
     from idtranslate import translate_to_ent_id
