@@ -15,13 +15,28 @@ with env.prefixed("ENT_MQTT_"):
 
 _use_id_translate = env("ENABLE_ID_TRANSLATE",False, 'bool')
 
+_use_num_translate  = env("ENABLE_NUM_FIELD_TRANSLATE",False, 'bool')
+_use_case_translate  = env("ENABLE_CASE_FIELD_TRANSLATE",False, 'bool')
+
 _mqtt_client_id = ent("ENT_MQTT_CLIENT_ID","")
 
 if _use_id_translate:
     from idtranslate import translate_to_ent_id
 
+if _use_num_translate or _use_case_translate:
+    from idtranslate import translate_to_lower, translate_to_str
+
 def conv_msg_dev2open(msg, ent_devid):
+
     m = json.loads(msg)
+
+    if _use_case_translate:
+        m = translate_to_lower(m)
+
+    if _use_num_translate:
+        m = translate_to_str(m)
+        
+
     ret = dict(
         timeStamp = m['TimeStamp'],
         data = m['data'],

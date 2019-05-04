@@ -18,9 +18,15 @@ with env.prefixed("OP_MQTT_"):
     )
 
 _use_id_translate = env("ENABLE_ID_TRANSLATE",False, 'bool')
+_use_num_translate  = env("ENABLE_NUM_FIELD_TRANSLATE",False, 'bool')
+_use_case_translate  = env("ENABLE_CASE_FIELD_TRANSLATE",False, 'bool')
 
 if _use_id_translate:
     from idtranslate import translate_to_open_id
+
+if _use_num_translate or _use_case_translate:
+    from idtranslate import translate_to_upper, translate_to_num
+
 
 def conv_msg_ent2dev(msg):
     l1 = json.loads(msg)
@@ -28,6 +34,13 @@ def conv_msg_ent2dev(msg):
     l3 = json.loads(l2)
     timestamp = int(l3['timeStamp'])
     data = json.loads(l3['data'])
+
+
+    if _use_case_translate:
+        data = translate_to_upper(data)
+
+    if _use_num_translate:
+        data = translate_to_num(data)
 
     ret_dict = dict(TimeStamp=timestamp, data=[data])
     ret = json.dumps(ret_dict)
